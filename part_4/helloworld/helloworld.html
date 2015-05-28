@@ -4,7 +4,8 @@
 
 <body>
 <h1>Welcome to Meteor!</h1>
-
+{{> loginButtons}}
+{{#if currentUser}}
 <form class="add-person">
     <input type="text" name="firstName"/>
     <input type="text" name="lastName"/>
@@ -15,11 +16,13 @@
     {{> person}}
 {{/each}}
 {{> hello}}
+{{/if}}
 </body>
 
 <template name="person">
     <li>
-        <form><input type="text" id="personid" value="{{this._id}}" style="display:none"><input type="text"
+        <form>
+            <input type="text" id="personid" value="{{this._id}}" style="display:none"><input type="text"
                                                                                                 id="firstname"
                                                                                                 value="{{firstName}}">
             <input type="text" id="lastname" value="{{lastName}}"> <input type="button" id="change-person"

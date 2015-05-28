@@ -1,8 +1,9 @@
 
 var Person = new Meteor.Collection("person");
-
 if (Meteor.isClient) {
   // counter starts at 0
+  Meteor.subscribe("person");
+
   Session.setDefault('counter', 0);
 
   Template.hello.helpers({
@@ -17,7 +18,7 @@ if (Meteor.isClient) {
     },
     personscount:function(){
       console.log(Person.find().fetch().length);
-      return Person.find().fetch().length;
+      return Person.find().count();
     }
   });
 
@@ -43,14 +44,10 @@ if (Meteor.isClient) {
     'submit .add-person': function(event){
       var firstName=event.target.firstName.value;
       var lastName=event.target.lastName.value;
-     Person.insert({
+      Meteor.call('addPerson',{
         firstName:firstName,
-        lastName:lastName
-      },function(err) {
-        if (err)
-          alert(err);
-        else
-          console.log("Daten hinzugefügt!");
+        lastName:lastName,
+        owner:Meteor.userId()
       });
       event.target.firstName.value = "";
       event.target.lastName.value="";
@@ -71,4 +68,17 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
   });
+    Meteor.publish('person',function()
+    {
+      return Person.find({
+        owner:Meteor.userId()
+    })});
+  Meteor.methods({
+    addPerson:function(person,userid) {
+
+      Person.insert({
+        firstName:person.firstName,
+        lastName:person.lastName,
+        owner:userid})
+    }});
 }
